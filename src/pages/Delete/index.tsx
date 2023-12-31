@@ -1,57 +1,41 @@
-import { useContext } from 'react';
-import { UsersContext } from '../../contexts/UsersContext';
-import * as z from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import axios from 'axios';
 
-const deleteUserFormSchema = z.object({
-    id: z.number(),
-});
-
-type DeleteUserFormInputs = z.infer<typeof deleteUserFormSchema>;
+export const EMPLOYEE_API_BASE_URL = 'http://localhost:3000/users';
 
 export function Delete() {
-    const { users, deleteUser } = useContext(UsersContext);
+    const handleSubmit = () => {
+        return updateEmployee(1); // returns a Promise
+    };
 
-    const {
-        //control,
-        register,
-        handleSubmit,
-        //formState: { isSubmitting },
-        reset,
-    } = useForm<DeleteUserFormInputs>({
-        resolver: zodResolver(deleteUserFormSchema),
-    });
+    // function getEmployees() {
+    //     return axios.get(EMPLOYEE_API_BASE_URL);
+    // }
 
-    async function handleDeleteUser(data: DeleteUserFormInputs) {
-        const { id } = data;
-        console.log('ID a ser excluído:', id);
+    // function createEmployee(employee: number) {
+    //     return axios.post(EMPLOYEE_API_BASE_URL, employee);
+    // }
 
-        try {
-            // Verifique se o ID existe antes de excluir
-            const userExists = users.some((user) => user.id === id);
+    // function getEmployeeById(employeeId: number) {
+    //     return axios.get(EMPLOYEE_API_BASE_URL + '/' + employeeId);
+    // }
 
-            if (userExists) {
-                await deleteUser({ id });
-                console.log('Usuário excluído com sucesso');
-                reset();
-            } else {
-                console.error('Usuário não encontrado.');
-            }
-        } catch (error) {
-            console.error('Erro ao processar exclusão:', error);
-        }
+    function updateEmployee(employee: number, employeeId: number) {
+        return axios.put(EMPLOYEE_API_BASE_URL + '/' + employeeId, employee);
     }
+
+    // function deleteEmployee(employeeId: number) {
+    //     return axios.delete(EMPLOYEE_API_BASE_URL + '/' + employeeId);
+    // }
 
     return (
         <div>
             <h1>delete</h1>
-            <form onSubmit={handleSubmit(handleDeleteUser)}>
+            <form onSubmit={handleSubmit}>
                 <input
                     type="text"
                     placeholder="id"
                     required
-                    {...register('id')}
+                    //{...register('id')}
                 />
                 <button type="submit">Deletar</button>
             </form>
